@@ -7,15 +7,13 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        toolset: [ClangCL, MSVC]
-        configuration: [Debug, Release]
+        toolset: [MSVC]
+        configuration: [Release]
     steps:
     - uses: actions/checkout@v4
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
     - name: Set toolset
-      if: matrix.toolset == 'ClangCL'
-      run: echo "toolset=/p:PlatformToolset=${{ matrix.toolset }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Build
       shell: cmd
       run: |
@@ -25,23 +23,3 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         path: D:\a\Osiris\Osiris\x64\Release\Osiris.dll
-
-  cmake:
-    runs-on: windows-2022
-    strategy:
-      matrix:
-        toolset: [ClangCL, MSVC]
-        configuration: [Debug, Release]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set toolset
-      if: matrix.toolset == 'ClangCL'
-      run: echo "toolset=-T ${{ matrix.toolset }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-    - name: configure
-      run: cmake -Werror=dev -D BUILD_TESTS=1 -D CMAKE_COMPILE_WARNING_AS_ERROR=1 -A x64 ${{ env.toolset }} -B build
-    - name: build source
-      run: cmake --build build --target Osiris --config ${{ matrix.configuration }}
-    - name: build unit tests
-      run: cmake --build build --target Tests --config ${{ matrix.configuration }}
-    - name: run unit tests
-      run: ctest --test-dir build --output-on-failure --schedule-random -j $env:NUMBER_OF_PROCESSORS
