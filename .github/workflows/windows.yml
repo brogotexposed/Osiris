@@ -24,7 +24,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        path: d
+        path: D:\a\Osiris\Osiris\x64\Release\Osiris.dll
 
   cmake:
     runs-on: windows-2022
