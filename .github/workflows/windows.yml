@@ -18,7 +18,13 @@ jobs:
       run: echo "toolset=/p:PlatformToolset=${{ matrix.toolset }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Build
       shell: cmd
-      run: msbuild Osiris.sln /p:Platform=x64 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}
+      run: |
+        msbuild Osiris.sln /p:Platform=x64 /p:Configuration=${{ matrix.configuration }} ${{ env.toolset }}
+        dir /b/s *.dll
+
+    - uses: actions/upload-artifact@v4
+      with:
+        path: d
 
   cmake:
     runs-on: windows-2022
